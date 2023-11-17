@@ -1,0 +1,2 @@
+class_name PositionComponent
+extends Vector2ValueComponent

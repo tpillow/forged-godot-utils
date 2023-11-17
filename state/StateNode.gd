@@ -1,0 +1,115 @@
+class_name StateNode
+extends Node
+
+##### Signals #####
+
+# This state has now changed to the active state
+# This will always be called after onEnteringState
+signal enteredState()
+
+# This state is still active, but we are going to toState
+signal exitingState(toState: StateNode)
+
+##### Stubs #####
+
+# This state is about to be the active state, but not yet
+# This can define arguments to take on transition into this state
+# Does not need to be defined (default: no parameters, no behavior)
+# func onEnteringState(...) -> void
+
+# Return true if able to transition to this state
+# This can define arguments to take that must match the args of onEnteringState
+# Does not need to be defined (default: return true)
+# func canGotoState(...) -> bool
+
+# Called if this state is the first ready state compared to its siblings
+# Because you will not get an onEnteringState / onEnteredState call
+func onEnteredStateInitially() -> void:
+	pass
+
+# Connected to the enteredState signal
+func onEnteredState() -> void:
+	pass
+
+# Connected to the exitingState signal
+func onExitingState(toState: StateNode) -> void:
+	pass
+
+##### Public State Helpers #####
+
+# Transition to toState, passing along setupArgs to the onEnteringState and
+# canGotoState functions; canGotoState must return true if it exists
+func gotoState(toState: StateNode, setupArgs: Array[Variant] = []) -> void:
+	assert(toState._canGotoState(setupArgs),
+		"trying to go to state when canGotoState returned false")
+	
+	exitingState.emit(toState)
+	if toState.has_method("onEnteringState"):
+		toState.callv("onEnteringState", setupArgs)
+	else:
+		assert(setupArgs.size() == 0,
+			"provided setupArgs to a state without a onEnteringState method")
+
+	_deactivateState()
+
+	toState._activateState()
+	toState.enteredState.emit()
+
+# Same as gotoState, but looks up toState by name (searches siblings)
+func gotoStateByName(name: String, setupArgs: Array[Variant] = []) -> void:
+	gotoState(get_parent().find_child(name) as StateNode, setupArgs)
+
+# If toState.canGotoState returns true, call gotoState
+# Returns true if the transition is made
+func gotoStateIfAble(toState: StateNode, setupArgs: Array[Variant] = []) -> bool:
+	if not toState._canGotoState(setupArgs):
+		return false
+	gotoState(toState, setupArgs)
+	return true
+
+# Same as gotoStateIfAble, but looks up toState by name (searches siblings)
+func gotoStateByNameIfAble(name: String, setupArgs: Array[Variant] = []) -> bool:
+	return gotoStateIfAble(get_parent().find_child(name), setupArgs)
+
+# Returns true if this state is the currently-active state compared to siblings
+func isActiveState() -> bool:
+	return is_node_ready() and process_mode != Node.PROCESS_MODE_DISABLED
+
+##### Static Helpers #####
+
+# Returns the currently active StateNode under the given parent
+# May return null if no active state is found
+static func findActiveState(parent: Node, ignoreSafetyCheck: bool = false) -> StateNode:
+	var foundStateNode := false
+	for child in parent.get_children():
+		if child is StateNode:
+			foundStateNode = true
+			if (child as StateNode).isActiveState():
+				return child
+	assert(ignoreSafetyCheck or not foundStateNode,
+		"findActiveState saw a StateNode but found no active ones")
+	return null
+
+##### Private Helpers #####
+
+func _ready() -> void:
+	_deactivateState()
+
+	enteredState.connect(onEnteredState)
+	exitingState.connect(onExitingState)
+	
+	if not findActiveState(get_parent(), true):
+		# This is the first ready state compared to its siblings
+		_activateState()
+		onEnteredStateInitially()
+
+func _canGotoState(setupArgs: Array[Variant]) -> bool:
+	if has_method("canGotoState"):
+		return callv("canGotoState", setupArgs)
+	return true
+
+func _activateState() -> void:
+	process_mode = Node.PROCESS_MODE_INHERIT
+
+func _deactivateState() -> void:
+	process_mode = Node.PROCESS_MODE_DISABLED
