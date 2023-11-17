@@ -1,3 +1,11 @@
+# A minimalistic utility class that implements state machine-like logic.
+# Any StateNode is implicitly in the same "state machine" as the rest of its
+# siblings that are also StateNodes. There is no state manager; instead only
+# 1 state is active at any given time, and that instance can be used to
+# transition between states.
+# The topmost StateNode under any given parent is implicitly the active state
+# to which onEnteredStateInitially will be called on ready. All other StateNode
+# siblings will be inactive initially.
 class_name StateNode
 extends Node
 
@@ -78,7 +86,7 @@ func isActiveState() -> bool:
 ##### Static Helpers #####
 
 # Returns the currently active StateNode under the given parent
-# May return null if no active state is found
+# May return null if no StateNode is found
 static func findActiveState(parent: Node, ignoreSafetyCheck: bool = false) -> StateNode:
 	var foundStateNode := false
 	for child in parent.get_children():
@@ -93,8 +101,8 @@ static func findActiveState(parent: Node, ignoreSafetyCheck: bool = false) -> St
 ##### Private Helpers #####
 
 func _ready() -> void:
+	# All states begin as inactive
 	_deactivateState()
-
 	enteredState.connect(onEnteredState)
 	exitingState.connect(onExitingState)
 	
@@ -103,6 +111,7 @@ func _ready() -> void:
 		_activateState()
 		onEnteredStateInitially()
 
+# Returns canGotoState(setupArgs) if it is implemented; otherwise true
 func _canGotoState(setupArgs: Array[Variant]) -> bool:
 	if has_method("canGotoState"):
 		return callv("canGotoState", setupArgs)
