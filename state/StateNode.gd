@@ -3,9 +3,10 @@
 # siblings that are also StateNodes. There is no state manager; instead only
 # 1 state is active at any given time, and that instance can be used to
 # transition between states.
-# The topmost StateNode under any given parent is implicitly the active state
-# to which onEnteredStateInitially will be called on ready. All other StateNode
-# siblings will be inactive initially.
+# The topmost StateNode under any given parent is implicitly the first active
+# state. All other StateNode siblings will be inactive initially.
+# The first active state WILL NOT receive onEnteringState / onEnteredState
+# calls. Instead, initialization for the first state can happen in _ready.
 class_name StateNode
 extends Node
 
@@ -29,11 +30,6 @@ signal exitingState(toState: StateNode)
 # This can define arguments to take that must match the args of onEnteringState
 # Does not need to be defined (default: return true)
 # func canGotoState(...) -> bool
-
-# Called if this state is the first ready state compared to its siblings
-# Because you will not get an onEnteringState / onEnteredState call
-func onEnteredStateInitially() -> void:
-	pass
 
 # Connected to the enteredState signal
 func onEnteredState() -> void:
@@ -129,7 +125,6 @@ func _ready() -> void:
 	if not findActiveState(get_parent(), true):
 		# This is the first ready state compared to its siblings
 		_activateState()
-		onEnteredStateInitially()
 
 # Returns canGotoState(setupArgs) if it is implemented; otherwise true
 func _canGotoState(setupArgs: Array[Variant]) -> bool:
@@ -142,3 +137,4 @@ func _activateState() -> void:
 
 func _deactivateState() -> void:
 	process_mode = Node.PROCESS_MODE_DISABLED
+
