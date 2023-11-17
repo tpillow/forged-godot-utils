@@ -65,7 +65,17 @@ func gotoState(toState: StateNode, setupArgs: Array[Variant] = []) -> void:
 
 # Same as gotoState, but looks up toState by name (searches siblings)
 func gotoStateByName(name: String, setupArgs: Array[Variant] = []) -> void:
-	gotoState(get_parent().find_child(name) as StateNode, setupArgs)
+	gotoState(get_parent().find_child(name, false) as StateNode, setupArgs)
+
+# Same as gotoState, but looks up toState by type (searches siblings)
+func gotoStateByType(type: Variant, setupArgs: Array[Variant] = []) -> void:
+	for child in get_parent().get_children():
+		if is_instance_of(child, type):
+			assert(is_instance_of(child, StateNode),
+				"gotoStateByType was provided a type that does not inherit StateNode")
+			gotoState(child as StateNode, setupArgs)
+			return
+	push_error("gotoStateByType did not find a sibling with type %s" % type)
 
 # If toState.canGotoState returns true, call gotoState
 # Returns true if the transition is made
@@ -77,7 +87,16 @@ func gotoStateIfAble(toState: StateNode, setupArgs: Array[Variant] = []) -> bool
 
 # Same as gotoStateIfAble, but looks up toState by name (searches siblings)
 func gotoStateByNameIfAble(name: String, setupArgs: Array[Variant] = []) -> bool:
-	return gotoStateIfAble(get_parent().find_child(name), setupArgs)
+	return gotoStateIfAble(get_parent().find_child(name, false), setupArgs)
+
+# Same as gotoStateIfAble, but looks up toState by type (searches siblings)
+func gotoStateByTypeIfAble(type: Variant, setupArgs: Array[Variant] = []) -> void:
+	for child in get_parent().get_children():
+		if is_instance_of(child, type):
+			assert(is_instance_of(child, StateNode),
+				"gotoStateByTypeIfAble was provided a type that does not inherit StateNode")
+			return gotoStateIfAble(child as StateNode, setupArgs)
+	push_error("gotoStateByTypeIfAble did not find a sibling with type %s" % type)
 
 # Returns true if this state is the currently-active state compared to siblings
 func isActiveState() -> bool:
