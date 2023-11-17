@@ -1,5 +1,5 @@
 class_name IntValueComponent
-extends Node
+extends BasicComponent
 
 signal valueChanged()
 

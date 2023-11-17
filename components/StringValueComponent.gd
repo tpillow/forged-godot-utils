@@ -1,5 +1,5 @@
 class_name StringValueComponent
-extends Node
+extends BasicComponent
 
 signal valueChanged()
 

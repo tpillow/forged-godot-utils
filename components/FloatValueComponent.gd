@@ -1,5 +1,5 @@
 class_name FloatValueComponent
-extends Node
+extends BasicComponent
 
 signal valueChanged()
 

@@ -1,5 +1,5 @@
 class_name Vector2ValueComponent
-extends Node
+extends BasicComponent
 
 signal valueChanged()
 
