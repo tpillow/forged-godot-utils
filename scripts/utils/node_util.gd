@@ -1,7 +1,7 @@
-# Autoload NodeUtil
+class_name NodeUtil
 extends Node
 
-func findParentOfType(node: Node, type: Variant) -> Node:
+static func findParentOfType(node: Node, type: Variant) -> Node:
 	while node:
 		var parent := node.get_parent()
 		if is_instance_of(parent, type):
@@ -9,7 +9,7 @@ func findParentOfType(node: Node, type: Variant) -> Node:
 		node = parent
 	return null
 
-func findChildOfType(parent: Node, type: Variant, recursive: bool) -> Node:
+static func findChildOfType(parent: Node, type: Variant, recursive: bool) -> Node:
 	for child in parent.get_children():
 		if is_instance_of(child, type):
 			return child
@@ -19,7 +19,7 @@ func findChildOfType(parent: Node, type: Variant, recursive: bool) -> Node:
 				return other
 	return null
 
-func findChildrenOfType(parent: Node, type: Variant, recursive: bool) -> Array[Node]:
+static func findChildrenOfType(parent: Node, type: Variant, recursive: bool) -> Array[Node]:
 	var ret: Array[Node] = []
 	for child in parent.get_children():
 		if is_instance_of(child, type):
