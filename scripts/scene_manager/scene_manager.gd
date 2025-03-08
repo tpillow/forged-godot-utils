@@ -1,8 +1,9 @@
 class_name SceneManager
 extends Node
 
-var TRANS_INSTANT: SceneTransition
-var TRANS_COLOR_FROM_CENTER: SceneTransition
+var TRANS_INSTANT: SceneTransitionInstant
+var TRANS_COLOR_FROM_CENTER: SceneTransitionColorFromCenter
+var TRANS_FADE: SceneTransitionFade
 
 var _scene_stack: Array[Node] = []
 var _scenes_container: Node
@@ -19,6 +20,7 @@ func _ready() -> void:
 	
 	TRANS_INSTANT = SceneTransitionInstant.new(self)
 	TRANS_COLOR_FROM_CENTER = SceneTransitionColorFromCenter.new(self)
+	TRANS_FADE = SceneTransitionFade.new(self)
 
 func _pop_all() -> void:
 	for scene in _scene_stack:
