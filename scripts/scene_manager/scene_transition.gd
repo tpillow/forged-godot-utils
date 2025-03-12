@@ -1,10 +1,12 @@
 class_name SceneTransition
 extends Object
 
-var _scene_manager: SceneManager
+enum Type {
+	PUSH,
+	POP,
+	REPLACE,
+	REPLACE_ALL,
+}
 
-func _init(scene_manager: SceneManager) -> void:
-	_scene_manager = scene_manager
-
-func begin(action: Callable) -> void:
+func begin(manager: SceneManager, type: Type, new_scene: Node) -> void:
 	assert(false)
