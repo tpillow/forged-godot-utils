@@ -1,13 +1,10 @@
-class_name SceneTransitionColorFromCenter
+class_name SceneTransitionFade
 extends SceneTransition
 
-var color: Color = Color.WHITE
-var trans_type_in: Tween.TransitionType = Tween.TRANS_BOUNCE
-var ease_type_in: Tween.EaseType = Tween.EASE_OUT
-var duration_in := 0.3
-var trans_type_out: Tween.TransitionType = Tween.TRANS_EXPO
-var ease_type_out: Tween.EaseType = Tween.EASE_OUT
-var duration_out := 0.1
+var color: Color = Color.BLACK
+var trans_type: Tween.TransitionType = Tween.TRANS_LINEAR
+var ease_type: Tween.EaseType = Tween.EASE_OUT
+var duration := 0.6
 
 func begin(manager: SceneManager, type: Type, new_scene: Node) -> void:
 	_start_tween(manager, func():
@@ -19,14 +16,14 @@ func _start_tween(manager: SceneManager, callback: Callable) -> void:
 	center_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var color_rect = ScreenPercentageColorRect.new()
 	color_rect.color = color
-	color_rect.size_percent = 0.0
+	color_rect.color.a = 0.0
+	color_rect.size_percent = 1.0
 	center_container.add_child(color_rect)
 	manager._overlays_container.add_child(center_container)
 	
 	var tween := manager.create_tween()
-	tween.set_trans(trans_type_in).set_ease(ease_type_in)
-	tween.tween_property(color_rect, "size_percent", 1.0, duration_in)
+	tween.set_trans(trans_type).set_ease(ease_type)
+	tween.tween_property(color_rect, "color:a", 1.0, duration / 2.0)
 	tween.tween_callback(callback.call)
-	tween.set_trans(trans_type_out).set_ease(ease_type_out)
-	tween.tween_property(color_rect, "size_percent", 0.0, duration_out)
+	tween.tween_property(color_rect, "color:a", 0.0, duration / 2.0)
 	tween.tween_callback(center_container.queue_free)
