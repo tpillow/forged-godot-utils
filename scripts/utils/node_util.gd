@@ -1,5 +1,5 @@
 class_name NodeUtil
-extends Node
+extends Object
 
 static func findParentOfType(node: Node, type: Variant) -> Node:
 	while node:
@@ -8,6 +8,15 @@ static func findParentOfType(node: Node, type: Variant) -> Node:
 			return parent
 		node = parent
 	return null
+	
+static func findParentsOfType(node: Node, type: Variant) -> Array[Node]:
+	var ret: Array[Node] = []
+	while node:
+		var parent := node.get_parent()
+		if is_instance_of(parent, type):
+			ret.append(parent)
+		node = parent
+	return ret
 
 static func findChildOfType(parent: Node, type: Variant, recursive: bool) -> Node:
 	for child in parent.get_children():
