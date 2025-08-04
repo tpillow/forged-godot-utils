@@ -9,3 +9,9 @@ static func normalize_deg_angle(angle: float) -> float:
 static func normalize_rad_angle(angle: float) -> float:
 	# TODO: do this without the conversion to normal degrees...
 	return deg_to_rad(normalize_deg_angle(rad_to_deg(angle)))
+
+static func rand_deg_angle() -> float:
+	return randf_range(0.0, 359.9999)
+
+static func rand_rad_angle() -> float:
+	return randf_range(0.0, TAU - 0.0001)
