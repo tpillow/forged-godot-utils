@@ -7,8 +7,7 @@ static func normalize_deg_angle(angle: float) -> float:
 
 # Take an angle in radians, and normalize it to [0.0, TAU)
 static func normalize_rad_angle(angle: float) -> float:
-	# TODO: do this without the conversion to normal degrees...
-	return deg_to_rad(normalize_deg_angle(rad_to_deg(angle)))
+	return angle - floor(angle / TAU) * TAU
 
 static func rand_deg_angle() -> float:
 	return randf_range(0.0, 359.9999)
