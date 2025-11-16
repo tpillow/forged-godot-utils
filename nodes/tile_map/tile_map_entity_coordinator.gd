@@ -7,10 +7,11 @@ class _EntityCell extends Object:
 
 const TILE_COORD_NULL: Vector2i = Vector2i.MIN
 
-# Tile size used to control coordinate conversions; based on this node's global position
+# Tile size used to control coordinate conversions; based on the entities_parent_node's
+# global_position
 @export var tile_size: Vector2 = Vector2(8, 8)
-# Whether or not entities added/removed should be children of this node or not
-@export var entities_are_children: bool = true
+# The node to add/remove children to; may be null
+@export var entities_parent_node: Node2D
 # Maximum number of entities per grid cell
 @export var max_entities_per_cell: int = 1
 # If true, entities must have a "tile_coord_changed(old, new)" signal, and when
@@ -21,8 +22,8 @@ var _entity_cells: Dictionary[Vector2i, _EntityCell] = {}
 var _entity_tile_coord_changed_callbacks: Dictionary[Node2D, Callable] = {}
 
 func _ready() -> void:
-	if entities_are_children:
-		for child in get_children():
+	if entities_parent_node:
+		for child in entities_parent_node.get_children():
 			if child.tile_coord == TILE_COORD_NULL:
 				child.tile_coord = global_to_tile_coord(child.global_position)
 			_add_entity_cell_only(child)
@@ -31,9 +32,9 @@ func _ready() -> void:
 func add_entity(entity: Node2D, tile_coord: Vector2i = TILE_COORD_NULL) -> void:
 	_add_entity_cell_only(entity, tile_coord)
 	
-	if entities_are_children:
-		assert(entity not in get_children())
-		add_child(entity)
+	if entities_parent_node:
+		assert(entity not in entities_parent_node.get_children())
+		entities_parent_node.add_child(entity)
 		
 	_attach_entity_listener(entity)
 		
@@ -45,18 +46,20 @@ func move_entity(entity: Node2D, tile_coord: Vector2i, from_coord: Vector2i = TI
 func remove_entity(entity: Node2D) -> void:
 	_remove_from_cell(entity, entity.tile_coord)
 
-	if entities_are_children:
-		assert(entity in get_children())
-		remove_child(entity)
+	if entities_parent_node:
+		assert(entity in entities_parent_node.get_children())
+		entities_parent_node.remove_child(entity)
 		
 	_detach_entity_listener(entity)
 		
 func tile_coord_to_global(tile_coord: Vector2i, centered: bool = true) -> Vector2:
 	var offset := tile_size / 2.0 if centered else Vector2.ZERO
-	return Vector2(tile_coord) * tile_size + offset + global_position
+	var pos_offset := entities_parent_node.global_position if entities_parent_node else Vector2.ZERO
+	return Vector2(tile_coord) * tile_size + offset + pos_offset
 
 func global_to_tile_coord(coord: Vector2) -> Vector2i:
-	return Vector2i((coord - global_position) / tile_size)
+	var pos_offset := entities_parent_node.global_position if entities_parent_node else Vector2.ZERO
+	return Vector2i((coord - pos_offset) / tile_size)
 
 func get_entities_at(tile_coord: Vector2i) -> Array[Node2D]:
 	if tile_coord not in _entity_cells:
