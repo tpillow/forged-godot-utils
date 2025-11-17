@@ -1,2 +1,3 @@
-# MyCommonGodot
-A collection of common Godot 4.x scripts and scenes that I might use in a variety of projects.
+# forged-godot-utils
+
+A collection of common Godot 4.x scripts/nodes/scenes that I commonly use between multiple projects.
