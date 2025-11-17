@@ -59,7 +59,9 @@ func tile_coord_to_global(tile_coord: Vector2i, centered: bool = true) -> Vector
 
 func global_to_tile_coord(coord: Vector2) -> Vector2i:
 	var pos_offset := entities_parent_node.global_position if entities_parent_node else Vector2.ZERO
-	return Vector2i((coord - pos_offset) / tile_size)
+	var tile_coord := Vector2i((coord - pos_offset) / tile_size)
+	var neg_offset := Vector2i(-1 if coord.x < 0 else 0, -1 if coord.y < 0 else 0)
+	return tile_coord + neg_offset
 
 func get_entities_at(tile_coord: Vector2i) -> Array[Node2D]:
 	if tile_coord not in _entity_cells:
