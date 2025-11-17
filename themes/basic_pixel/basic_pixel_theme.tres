@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://d1oue13ft78y8"]
+
+[ext_resource type="FontFile" uid="uid://d2ywh8w5xcf1o" path="res://forged_godot_utils/assets/monogram/monogram-extended.ttf" id="1_ponca"]
+
+[resource]
+default_font = ExtResource("1_ponca")
+default_font_size = 32

@@ -1,7 +1,7 @@
 class_name NodeUtil
 extends Object
 
-static func findParentOfType(node: Node, type: Variant) -> Node:
+static func find_parent_of_type(node: Node, type: Variant) -> Node:
 	while node:
 		var parent := node.get_parent()
 		if is_instance_of(parent, type):
@@ -9,7 +9,7 @@ static func findParentOfType(node: Node, type: Variant) -> Node:
 		node = parent
 	return null
 	
-static func findParentsOfType(node: Node, type: Variant) -> Array[Node]:
+static func find_all_parents_of_type(node: Node, type: Variant) -> Array[Node]:
 	var ret: Array[Node] = []
 	while node:
 		var parent := node.get_parent()
@@ -18,21 +18,27 @@ static func findParentsOfType(node: Node, type: Variant) -> Array[Node]:
 		node = parent
 	return ret
 
-static func findChildOfType(parent: Node, type: Variant, recursive: bool) -> Node:
+static func find_child_of_type(parent: Node, type: Variant, recursive: bool) -> Node:
 	for child in parent.get_children():
 		if is_instance_of(child, type):
 			return child
 		if recursive:
-			var other := findChildOfType(child, type, recursive)
+			var other := find_child_of_type(child, type, recursive)
 			if other:
 				return other
 	return null
 
-static func findChildrenOfType(parent: Node, type: Variant, recursive: bool) -> Array[Node]:
+static func find_all_children_of_type(parent: Node, type: Variant, recursive: bool) -> Array[Node]:
 	var ret: Array[Node] = []
 	for child in parent.get_children():
 		if is_instance_of(child, type):
 			ret.append(child)
 		if recursive:
-			ret += findChildrenOfType(child, type, recursive)
+			ret += find_all_children_of_type(child, type, recursive)
 	return ret
+
+static func remove_all_children(node: Node, queue_free_children: bool) -> void:
+	for child in node.get_children():
+		node.remove_child(child)
+		if queue_free_children:
+			child.queue_free()

@@ -6,7 +6,7 @@ var TRANS_COLOR_FROM_CENTER := SceneTransitionColorFromCenter.new()
 var TRANS_FADE := SceneTransitionFade.new()
 
 var _scenes_container: Node
-var _overlays_container: Node
+var _overlays_container: CanvasLayer
 
 var top_scene: Node:
 	get: return (
@@ -17,7 +17,8 @@ var top_scene: Node:
 func _ready() -> void:
 	_scenes_container = Node.new()
 	get_parent().add_child.call_deferred(_scenes_container)
-	_overlays_container = Node.new()
+	_overlays_container = CanvasLayer.new()
+	_overlays_container.layer = 1
 	get_parent().add_child.call_deferred(_overlays_container)
 
 func _pop_all_scenes(free: bool = true) -> Array[Node]:
