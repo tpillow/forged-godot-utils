@@ -51,6 +51,9 @@ func _ready() -> void:
 	_refresh_options()
 	
 func _unhandled_input(event: InputEvent) -> void:
+	if options.size() <= 0:
+		return
+
 	if event is InputEventKey:
 		if event.is_action_pressed("ui_accept"):
 			option_selected.emit(selected_index)
@@ -61,7 +64,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				selected_index -= 1
 		elif event.is_action_pressed("ui_down"):
 			if allow_wrap_around and selected_index == options.size() - 1:
-				selected_index = vcx  lhcx 0
+				selected_index = 0
 			else:
 				selected_index += 1
 

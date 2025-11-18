@@ -1,38 +1,59 @@
+@tool
 class_name BasicTextOptionDialogue
 extends PanelContainer
 
-signal option_selected(option_index: int)
+signal acknowledged()
+signal option_selected(index: int)
+
+@export var header := "Header":
+	get: return header
+	set(value):
+		header = value
+		_refresh()
+@export var content := "This is content!":
+	get: return content
+	set(value):
+		content = value
+		_refresh()
+@export var options: Array[String] = ["Option A", "Option B"]:
+	get: return options
+	set(value):
+		options = value
+		_refresh()
+@export var footer := "Footer":
+	get: return footer
+	set(value):
+		footer = value
+		_refresh()
 
 @onready var header_label: RichTextLabel = %HeaderLabel
 @onready var content_label: RichTextLabel = %ContentLabel
-@onready var vbox_options: VBoxContainer = %VBoxOptions
+@onready var options_list: SelectableTextItemList = %OptionsList
 @onready var footer_label: RichTextLabel = %FooterLabel
-
-var _cur_option_index: int = 0
 
 static func instantiate_new() -> BasicTextOptionDialogue:
 	return preload("res://forged_godot_utils/ui_nodes/basic_text_option_dialogue.tscn").instantiate()
 
-func setup(header: String, content: String, options: Array[String], footer: String) -> void:
+func _ready() -> void:
+	options_list.option_selected.connect(option_selected.emit)
+	_refresh()
+
+func _refresh() -> void:
+	if not is_node_ready():
+		return
+
 	header_label.text = header
 	header_label.visible = header != ""
 	content_label.text = content
-	content_label.visible = content != ""
+	options_list.options = options
+	options_list.visible = options.size() > 0
 	footer_label.text = footer
 	footer_label.visible = footer != ""
-	
-	vbox_options.visible = options.size() > 0
-	NodeUtil.remove_all_children(vbox_options, true)
-	for option in options:
-		var opt_label := RichTextLabel.new()
-		opt_label.bbcode_enabled = true
-		opt_label.set_meta("option_text", option)
-	_refresh_option_labels()
 
-func _refresh_option_labels() -> void:
-	for i in range(vbox_options.get_child_count()):
-		var option_label: RichTextLabel = vbox_options.get_child(i)
-		var text: String = option_label.get_meta("option_text")
-		var prefix := "[color=green]> " if i == _cur_option_index else ""
-		var suffix := "[/color]" if i == _cur_option_index else ""
-		option_label.text = prefix + text
+func _unhandled_input(event: InputEvent) -> void:
+	if options_list.options.size() > 0:
+		return
+
+	if event is InputEventKey:
+		if event.is_action_pressed("ui_accept"):
+			acknowledged.emit()

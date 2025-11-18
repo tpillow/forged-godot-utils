@@ -1,7 +1,10 @@
-[gd_resource type="Theme" load_steps=2 format=3 uid="uid://d1oue13ft78y8"]
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://d1oue13ft78y8"]
 
+[ext_resource type="StyleBox" uid="uid://4bpewg4cn0pr" path="res://forged_godot_utils/themes/basic_pixel/style_box_border4_margin4.tres" id="1_as7dq"]
 [ext_resource type="FontFile" uid="uid://d2ywh8w5xcf1o" path="res://forged_godot_utils/assets/monogram/monogram-extended.ttf" id="1_ponca"]
 
 [resource]
 default_font = ExtResource("1_ponca")
 default_font_size = 32
+Panel/styles/panel = ExtResource("1_as7dq")
+PanelContainer/styles/panel = ExtResource("1_as7dq")
