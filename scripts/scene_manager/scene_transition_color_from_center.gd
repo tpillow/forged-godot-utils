@@ -4,10 +4,10 @@ extends SceneTransition
 var color: Color = Color.WHITE
 var trans_type_in: Tween.TransitionType = Tween.TRANS_BOUNCE
 var ease_type_in: Tween.EaseType = Tween.EASE_OUT
-var duration_in := 0.3
+var duration_in := 0.8
 var trans_type_out: Tween.TransitionType = Tween.TRANS_EXPO
 var ease_type_out: Tween.EaseType = Tween.EASE_OUT
-var duration_out := 0.1
+var duration_out := duration_in / 2.0
 
 func begin(manager: SceneManager, type: Type, new_scene: Node) -> void:
 	_start_tween(manager, func():

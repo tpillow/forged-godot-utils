@@ -33,5 +33,6 @@ func _refresh_option_labels() -> void:
 	for i in range(vbox_options.get_child_count()):
 		var option_label: RichTextLabel = vbox_options.get_child(i)
 		var text: String = option_label.get_meta("option_text")
-		var prefix := "> " if i == _cur_option_index else ""
+		var prefix := "[color=green]> " if i == _cur_option_index else ""
+		var suffix := "[/color]" if i == _cur_option_index else ""
 		option_label.text = prefix + text
