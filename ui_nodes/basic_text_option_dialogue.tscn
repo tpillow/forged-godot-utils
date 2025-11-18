@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://ubk0xejaawwg"]
+[gd_scene load_steps=4 format=3 uid="uid://ubk0xejaawwg"]
 
 [ext_resource type="Theme" uid="uid://d1oue13ft78y8" path="res://forged_godot_utils/themes/basic_pixel/basic_pixel_theme.tres" id="1_f2pca"]
 [ext_resource type="Script" uid="uid://06p471v0ut4q" path="res://forged_godot_utils/ui_nodes/basic_text_option_dialogue.gd" id="2_yp4wy"]
+[ext_resource type="Script" uid="uid://rrj6g78f4gol" path="res://forged_godot_utils/ui_nodes/selectable_text_item_list.gd" id="3_gk2qn"]
 
 [node name="BasicTextOptionDialogue" type="PanelContainer"]
 anchors_preset = 15
@@ -19,7 +20,7 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=red]Dialogue?!?[/color]"
+text = "[center][color=red]Header[/color][/center]"
 fit_content = true
 
 [node name="ContentLabel" type="RichTextLabel" parent="VBoxMain"]
@@ -27,22 +28,19 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-text = "And here is some text!"
+text = "[center]This is CONTENT![/center]"
 fit_content = true
 
-[node name="VBoxOptions" type="VBoxContainer" parent="VBoxMain"]
-unique_name_in_owner = true
+[node name="SelectableTextItemList" type="VBoxContainer" parent="VBoxMain"]
 layout_mode = 2
-
-[node name="TestOptionLabel" type="RichTextLabel" parent="VBoxMain/VBoxOptions"]
-layout_mode = 2
-bbcode_enabled = true
-text = "[right]> Test option label[/right]"
-fit_content = true
+script = ExtResource("3_gk2qn")
+options = Array[String](["Option A", "Option B", "Option C"])
+item_horizontal_alignment = 1
+metadata/_custom_type_script = "uid://rrj6g78f4gol"
 
 [node name="FooterLabel" type="RichTextLabel" parent="VBoxMain"]
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
-text = "[right][color=yellow]<Enter> to Continue[/color][/right]"
+text = "[center][color=yellow]Footer[/color][/center]"
 fit_content = true
