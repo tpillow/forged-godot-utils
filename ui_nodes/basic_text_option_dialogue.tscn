@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://ubk0xejaawwg"]
 
 [ext_resource type="Theme" uid="uid://d1oue13ft78y8" path="res://forged_godot_utils/themes/basic_pixel/basic_pixel_theme.tres" id="1_f2pca"]
-[ext_resource type="Script" uid="uid://06p471v0ut4q" path="res://forged_godot_utils/scenes/basic_text_option_dialogue.gd" id="2_yp4wy"]
+[ext_resource type="Script" uid="uid://06p471v0ut4q" path="res://forged_godot_utils/ui_nodes/basic_text_option_dialogue.gd" id="2_yp4wy"]
 
 [node name="BasicTextOptionDialogue" type="PanelContainer"]
 anchors_preset = 15

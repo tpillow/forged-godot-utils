@@ -11,7 +11,7 @@ signal option_selected(option_index: int)
 var _cur_option_index: int = 0
 
 static func instantiate_new() -> BasicTextOptionDialogue:
-	return preload("res://forged_godot_utils/scenes/basic_text_option_dialogue.tscn").instantiate()
+	return preload("res://forged_godot_utils/ui_nodes/basic_text_option_dialogue.tscn").instantiate()
 
 func setup(header: String, content: String, options: Array[String], footer: String) -> void:
 	header_label.text = header
