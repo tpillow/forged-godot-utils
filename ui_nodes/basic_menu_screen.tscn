@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://5jip7suo6bgp"]
+
+[ext_resource type="PackedScene" uid="uid://ubk0xejaawwg" path="res://forged_godot_utils/ui_nodes/basic_text_option_dialogue.tscn" id="1_sqva1"]
+
+[node name="BasicMenuScreen" instance=ExtResource("1_sqva1")]
+
+[node name="HeaderLabel" parent="VBoxMain" index="0"]
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+theme_override_font_sizes/normal_font_size = 128
+horizontal_alignment = 1
+
+[node name="ContentLabel" parent="VBoxMain" index="1"]
+size_flags_stretch_ratio = 0.2
+
+[node name="OptionsList" parent="VBoxMain" index="2"]
+size_flags_vertical = 6
+selected_item_prefix = "[font_size=66][color=green]> "
+unselected_item_prefix = "[font_size=64]"
+unselected_item_suffix = "[/font_size]"
+
+[node name="FooterLabel" parent="VBoxMain" index="3"]
+horizontal_alignment = 1
