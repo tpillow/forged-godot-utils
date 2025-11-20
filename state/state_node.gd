@@ -55,7 +55,7 @@ func get_state_by_type(type: Variant) -> StateNode:
 
 # Transition to to_state, passing along setup_args to the on_entering_state function
 # If to_state is the current state, this is a no-op
-func goto_state(to_state: StateNode, setup_args: Array[Variant] = []) -> void:
+func goto_state(to_state: StateNode, ...setup_args: Array[Variant]) -> void:
 	#if to_state == self:
 		#push_warning("calling goto_state from the same state: %s" % to_state)
 
@@ -72,16 +72,16 @@ func goto_state(to_state: StateNode, setup_args: Array[Variant] = []) -> void:
 	to_state.entered_state.emit()
 
 # Same as goto_state, but looks up to_state by name (searches siblings)
-func goto_state_by_name(name: String, setup_args: Array[Variant] = []) -> void:
+func goto_state_by_name(name: String, ...setup_args: Array[Variant]) -> void:
 	var state_node := get_state_by_name(name)
 	assert(state_node, "gototStateByName did not find node %s" % name)
-	goto_state(state_node, setup_args)
+	goto_state.callv([state_node] + setup_args)
 
 # Same as goto_state, but looks up to_state by type (searches siblings)
-func goto_state_by_type(type: Variant, setup_args: Array[Variant] = []) -> void:
+func goto_state_by_type(type: Variant, ...setup_args: Array[Variant]) -> void:
 	var state_node := get_state_by_type(type)
 	assert(state_node, "goto_state_by_type did not find a node %s" % type)
-	goto_state(state_node, setup_args)
+	goto_state.callv([state_node] + setup_args)
 
 # Returns true if this state is the currently-active state compared to siblings
 func is_active_state() -> bool:
