@@ -35,12 +35,14 @@ func on_entered_state() -> void:
 	pass
 
 # Connected to the exiting_state signal
+@warning_ignore("unused_parameter")
 func on_exiting_state(to_state: StateNode) -> void:
 	pass
 
 ##### Public State Helpers #####
 
 # Get a state node under the same parent with the given name
+@warning_ignore("shadowed_variable_base_class")
 func get_state_by_name(name: String) -> StateNode:
 	return get_parent().find_child(name, false) as StateNode
 	
@@ -72,6 +74,7 @@ func goto_state(to_state: StateNode, ...setup_args: Array[Variant]) -> void:
 	to_state.entered_state.emit()
 
 # Same as goto_state, but looks up to_state by name (searches siblings)
+@warning_ignore("shadowed_variable_base_class")
 func goto_state_by_name(name: String, ...setup_args: Array[Variant]) -> void:
 	var state_node := get_state_by_name(name)
 	assert(state_node, "gototStateByName did not find node %s" % name)
