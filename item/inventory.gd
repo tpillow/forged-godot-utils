@@ -9,6 +9,12 @@ extends Resource
 
 var num_item_slots: int:
 	get: return item_slots.size()
+	
+static func new_with_num_slots(num_slots: int) -> Inventory:
+	var inv := Inventory.new()
+	for i in range(num_slots):
+		inv.item_slots.append(ItemSlot.new())
+	return inv
 
 func get_item_slots_with_item(item: Item) -> Array[ItemSlot]:
 	return item_slots.filter(func(slot):
