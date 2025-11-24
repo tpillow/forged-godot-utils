@@ -12,11 +12,16 @@ signal option_selected(index: int)
 @export var selected_index: int = 0:
 	get: return selected_index
 	set(value):
+		if selected_index == value:
+			return
 		if options.size() <= 0:
 			selected_index = -1
 			return
 		selected_index = clampi(value, 0, options.size() - 1)
-		_refresh_selection()
+		if center_select_max_options_shown > 0:
+			_refresh_options()
+		else:
+			_refresh_selection()
 @export var selected_item_prefix := "[color=green]> ":
 	get: return selected_item_prefix
 	set(value):
@@ -56,6 +61,11 @@ signal option_selected(index: int)
 	set(value):
 		enable_mouse_input = value
 		_refresh_options()
+@export var center_select_max_options_shown: int = -1:
+	get: return center_select_max_options_shown
+	set(value):
+		center_select_max_options_shown = value
+		_refresh_options()
 
 func _ready() -> void:
 	_refresh_options()
@@ -78,6 +88,16 @@ func _unhandled_input(event: InputEvent) -> void:
 			else:
 				selected_index += 1
 
+func _create_label_base(option_index: int, option_text: String) -> RichTextLabel:
+	var label := RichTextLabel.new()
+	label.bbcode_enabled = true
+	label.text = option_text
+	label.fit_content = true
+	label.horizontal_alignment = item_horizontal_alignment
+	label.set_meta("option_text", option_text)
+	label.set_meta("option_index", option_index)
+	return label
+
 func _refresh_options() -> void:
 	if not is_node_ready():
 		return
@@ -85,34 +105,39 @@ func _refresh_options() -> void:
 	NodeUtil.remove_all_children(self, true)
 	if options.size() <= 0:
 		return
+	var safe_selected_index = clampi(selected_index, 0, options.size() - 1)
 	
-	for option_index in range(options.size()):
-		var option_text := options[option_index]
-		var label := RichTextLabel.new()
-		label.bbcode_enabled = true
-		label.text = option_text
-		label.fit_content = true
-		label.horizontal_alignment = item_horizontal_alignment
-		label.set_meta("option_text", option_text)
-		if enable_mouse_input:
-			label.mouse_entered.connect(func():
-				selected_index = option_index)
-			label.gui_input.connect(func(event: InputEvent):
-				if event is InputEventMouseButton and event.is_pressed():
-					selected_index = option_index
-					option_selected.emit(selected_index))
-		add_child(label)
+	if center_select_max_options_shown > 0:
+		assert(not enable_mouse_input)
+		var center_visual_index: int = center_select_max_options_shown / 2
+		for i in range(center_select_max_options_shown):
+			var option_index: int = (i - center_visual_index) + safe_selected_index
+			var option_text := "" if option_index < 0 or option_index >= options.size() else options[option_index]
+			var label := _create_label_base(option_index, option_text)
+			add_child(label)
+	else:
+		for option_index in range(options.size()):
+			var option_text := options[option_index]
+			var label := _create_label_base(option_index, option_text)
+			if enable_mouse_input:
+				label.mouse_entered.connect(func():
+					selected_index = option_index)
+				label.gui_input.connect(func(event: InputEvent):
+					if event is InputEventMouseButton and event.is_pressed():
+						selected_index = option_index
+						option_selected.emit(selected_index))
+			add_child(label)
 	
-	# Re-clamps the selected index; will trigger _refresh_selection
-	selected_index = selected_index
+	selected_index = safe_selected_index
+	_refresh_selection()
 
 func _refresh_selection() -> void:
 	if not is_node_ready():
 		return
 
-	assert(get_child_count() == options.size())
-	for i in range(get_child_count()):
-		var label: RichTextLabel = get_child(i)
-		var prefix := selected_item_prefix if i == selected_index else unselected_item_prefix
-		var suffix := selected_item_suffix if i == selected_index else unselected_item_suffix
+	assert(get_child_count() == (options.size() if center_select_max_options_shown <= 0 else center_select_max_options_shown))
+	for label in get_children():
+		var option_index = label.get_meta("option_index")
+		var prefix := selected_item_prefix if option_index == selected_index else unselected_item_prefix
+		var suffix := selected_item_suffix if option_index == selected_index else unselected_item_suffix
 		label.text = prefix + label.get_meta("option_text") + suffix
