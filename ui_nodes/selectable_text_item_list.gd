@@ -13,6 +13,7 @@ signal option_selected(index: int)
 	get: return selected_index
 	set(value):
 		if options.size() <= 0:
+			selected_index = -1
 			return
 		selected_index = clampi(value, 0, options.size() - 1)
 		_refresh_selection()
@@ -46,12 +47,21 @@ signal option_selected(index: int)
 	set(value):
 		allow_wrap_around = value
 		_refresh_selection()
+@export var enable_key_input := false:
+	get: return enable_key_input
+	set(value):
+		enable_key_input = value
+@export var enable_mouse_input := false:
+	get: return enable_mouse_input
+	set(value):
+		enable_mouse_input = value
+		_refresh_options()
 
 func _ready() -> void:
 	_refresh_options()
 	
 func _unhandled_input(event: InputEvent) -> void:
-	if options.size() <= 0:
+	if not enable_key_input:
 		return
 
 	if event is InputEventKey:
@@ -76,13 +86,21 @@ func _refresh_options() -> void:
 	if options.size() <= 0:
 		return
 	
-	for option_text in options:
+	for option_index in range(options.size()):
+		var option_text := options[option_index]
 		var label := RichTextLabel.new()
 		label.bbcode_enabled = true
 		label.text = option_text
 		label.fit_content = true
 		label.horizontal_alignment = item_horizontal_alignment
 		label.set_meta("option_text", option_text)
+		if enable_mouse_input:
+			label.mouse_entered.connect(func():
+				selected_index = option_index)
+			label.gui_input.connect(func(event: InputEvent):
+				if event is InputEventMouseButton and event.is_pressed():
+					selected_index = option_index
+					option_selected.emit(selected_index))
 		add_child(label)
 	
 	# Re-clamps the selected index; will trigger _refresh_selection

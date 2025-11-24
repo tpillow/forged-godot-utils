@@ -86,11 +86,3 @@ func _refresh() -> void:
 	options_list.visible = options.size() > 0
 	footer_label.text = footer
 	footer_label.visible = footer != ""
-
-func _unhandled_input(event: InputEvent) -> void:
-	if options_list.options.size() > 0:
-		return
-
-	if event is InputEventKey:
-		if event.is_action_pressed("ui_accept"):
-			option_selected.emit(-1)

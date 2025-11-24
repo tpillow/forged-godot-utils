@@ -44,3 +44,9 @@ func decrement_count(amount: int = 1) -> void:
 		unset_item()
 	else:
 		changed.emit()
+
+static func swap(a: ItemSlot, b: ItemSlot) -> void:
+	var tmp_item := a.item
+	var tmp_count := a.count
+	a.set_item(b.item, b.count)
+	b.set_item(tmp_item, tmp_count)

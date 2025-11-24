@@ -42,6 +42,8 @@ options = Array[String](["Option A", "Option B"])
 selected_item_prefix = "[font_size=34][color=green]> "
 selected_item_suffix = " <[/color][/font_size]"
 item_horizontal_alignment = 1
+enable_key_input = true
+enable_mouse_input = true
 metadata/_custom_type_script = "uid://rrj6g78f4gol"
 
 [node name="FooterLabel" type="RichTextLabel" parent="VBoxMain"]
