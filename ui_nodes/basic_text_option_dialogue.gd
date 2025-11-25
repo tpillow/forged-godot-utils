@@ -79,15 +79,10 @@ static func show_dialogue(
 	return selected_option
 
 func _ready() -> void:
-	options_list.option_selected_by_mouse.connect(func(index):
+	options_list.option_selected.connect(func(index):
 		_do_select())
 	_refresh()
 	_ready_content()
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		if event.is_action_pressed("ui_accept"):
-			_do_select()
 
 func _do_select() -> void:
 	if not _done_revealing:
