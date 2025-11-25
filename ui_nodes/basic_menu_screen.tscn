@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://ubk0xejaawwg" path="res://forged_godot_utils/ui_nodes/basic_text_option_dialogue.tscn" id="1_sqva1"]
 
 [node name="BasicMenuScreen" instance=ExtResource("1_sqva1")]
+reveal_char_duration = null
 
 [node name="HeaderLabel" parent="VBoxMain" index="0"]
 size_flags_vertical = 3
@@ -18,7 +19,6 @@ size_flags_vertical = 6
 selected_item_prefix = "[font_size=66][color=green]> "
 unselected_item_prefix = "[font_size=64]"
 unselected_item_suffix = "[/font_size]"
-center_select_max_options_shown = -1
 
 [node name="FooterLabel" parent="VBoxMain" index="3"]
 horizontal_alignment = 1

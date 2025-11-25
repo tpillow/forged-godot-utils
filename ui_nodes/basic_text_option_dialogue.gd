@@ -24,16 +24,22 @@ signal option_selected(index: int)
 	set(value):
 		footer = value
 		_refresh()
+@export var reveal_char_duration := -1.0
 
 @onready var header_label: RichTextLabel = %HeaderLabel
 @onready var content_label: RichTextLabel = %ContentLabel
 @onready var options_list: SelectableTextItemList = %OptionsList
 @onready var footer_label: RichTextLabel = %FooterLabel
 
+var _reveal_char_tween: Tween
+var _done_revealing: bool:
+	get: return not _reveal_char_tween or not _reveal_char_tween.is_running()
+
 static var show_dialogue_scene_manager: SceneManager = null
 static var show_dialogue_scene_transition: SceneTransition = SceneTransitionInstant.new()
 static var show_dialogue_min_size := Vector2(600, 300)
 static var show_dialogue_default_footer := ""
+static var show_dialogue_reveal_char_duration := 0.75
 
 static func instantiate_new() -> BasicTextOptionDialogue:
 	return preload("res://forged_godot_utils/ui_nodes/basic_text_option_dialogue.tscn").instantiate()
@@ -61,6 +67,7 @@ static func show_dialogue(
 	dialogue.options = options
 	dialogue.footer = footer
 	dialogue.custom_minimum_size = show_dialogue_min_size
+	dialogue.reveal_char_duration = show_dialogue_reveal_char_duration
 	
 	var container := CenterContainer.new()
 	container.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -72,17 +79,41 @@ static func show_dialogue(
 	return selected_option
 
 func _ready() -> void:
-	options_list.option_selected.connect(option_selected.emit)
+	options_list.option_selected.connect(func(index: int):
+		if not _done_revealing:
+			_force_complete_reveal()
+			return
+		option_selected.emit(index))
 	_refresh()
+	_ready_content()
 
 func _refresh() -> void:
 	if not is_node_ready():
 		return
 
 	header_label.text = header
-	header_label.visible = header != ""
 	content_label.text = content
 	options_list.options = options
-	options_list.visible = options.size() > 0
 	footer_label.text = footer
+	
+	header_label.visible = header != ""
+	options_list.visible = options.size() > 0
 	footer_label.visible = footer != ""
+
+func _ready_content() -> void:
+	if Engine.is_editor_hint() or reveal_char_duration <= 0:
+		return
+	
+	footer_label.modulate = Color.TRANSPARENT
+	options_list.modulate = Color.TRANSPARENT
+	content_label.visible_ratio = 0.0
+	_reveal_char_tween = create_tween()
+	_reveal_char_tween.tween_property(content_label, "visible_ratio", 1.0, reveal_char_duration)
+	_reveal_char_tween.tween_callback(_force_complete_reveal)
+
+func _force_complete_reveal() -> void:
+	_reveal_char_tween.kill()
+	content_label.visible_ratio = 1.0
+	footer_label.modulate = Color.WHITE
+	options_list.modulate = Color.WHITE
+	assert(_done_revealing)
