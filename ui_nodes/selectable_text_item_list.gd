@@ -2,7 +2,8 @@
 class_name SelectableTextItemList
 extends VBoxContainer
 
-signal option_selected(index: int)
+signal selected_index_changed()
+signal option_selected_by_mouse(index: int)
 
 @export var options: Array[String] = []:
 	get: return options
@@ -18,6 +19,7 @@ signal option_selected(index: int)
 			selected_index = -1
 			return
 		selected_index = clampi(value, 0, options.size() - 1)
+		selected_index_changed.emit()
 		if center_select_max_options_shown > 0:
 			_refresh_options()
 		else:
@@ -75,9 +77,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 	if event is InputEventKey:
-		if event.is_action_pressed("ui_accept"):
-			option_selected.emit(selected_index)
-		elif event.is_action_pressed("ui_up"):
+		if event.is_action_pressed("ui_up"):
 			if allow_wrap_around and selected_index == 0:
 				selected_index = options.size() - 1
 			else:
@@ -125,7 +125,7 @@ func _refresh_options() -> void:
 				label.gui_input.connect(func(event: InputEvent):
 					if event is InputEventMouseButton and event.is_pressed():
 						selected_index = option_index
-						option_selected.emit(selected_index))
+						option_selected_by_mouse.emit(selected_index))
 			add_child(label)
 	
 	selected_index = safe_selected_index
