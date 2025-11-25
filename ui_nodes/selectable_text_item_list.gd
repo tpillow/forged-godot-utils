@@ -109,6 +109,7 @@ func _refresh_options() -> void:
 	
 	if center_select_max_options_shown > 0:
 		assert(not enable_mouse_input)
+		@warning_ignore("integer_division")
 		var center_visual_index: int = center_select_max_options_shown / 2
 		for i in range(center_select_max_options_shown):
 			var option_index: int = (i - center_visual_index) + safe_selected_index
