@@ -14,12 +14,12 @@ func _ready() -> void:
     match on_ready_eval_prop_trigger_mode:
         TweenTrigger.OnReadyTriggerMode.NONE: pass
 		TweenTrigger.OnReadyTriggerMode.TRIGGER:
-			assert(on_ready_trigger_mode == TweenTrigger.OnReadyTriggerMode.NONE, "base TweenTrigger already has ready set")
+			assert(on_ready_trigger_mode == TweenTrigger.OnReadyTriggerMode.NONE, "base TweenTrigger already has OnReadyTriggerMode used")
 			if _last_value != value: break
 			do_trigger.call_deferred()
 		TweenTrigger.OnReadyTriggerMode.TRIGGER_FORCE_COMPLETE:
 			assert(false, "unimplemented!")
-            assert(on_ready_trigger_mode == TweenTrigger.OnReadyTriggerMode.NONE, "base TweenTrigger already has ready set")
+            assert(on_ready_trigger_mode == TweenTrigger.OnReadyTriggerMode.NONE, "base TweenTrigger already has OnReadyTriggerMode used")
 			if _last_value != value: break
 			trigger_and_force_complete.call_deferred()
         _: assert(false)
