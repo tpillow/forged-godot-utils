@@ -2,9 +2,8 @@ class_name SimpleUiTweenStep
 extends TweenStep
 
 enum UiTweenType {
-	SLIDE_IN_LEFT,
+	TO_INITIAL_POS,
 	SLIDE_OUT_LEFT,
-	SLIDE_IN_RIGHT,
 	SLIDE_OUT_RIGHT,
 }
 
@@ -13,23 +12,27 @@ enum UiTweenType {
 @export var trans: Tween.TransitionType = Tween.TRANS_EXPO
 @export var duration := 1.0
 
+var _initial_position: Vector2
+var _initial_size: Vector2
+
+func _ready() -> void:
+    _initial_position = tween_anim.source.node.position
+    _initial_size = tween_anim.source.node.size
+
 func apply_tween() -> void:
 	tween_anim.tween.set_ease(easing).set_trans(trans)
 	
 	match ui_tween_type:
-		UiTweenType.SLIDE_IN_LEFT, UiTweenType.SLIDE_IN_RIGHT:
-			var value: Vector2 = tween_anim.source.intial_node_prop_cache.get("position")
-			tween_anim.tween.tween_property(tween_anim.source.node, "position", value, duration)
+		UiTweenType.TO_INITIAL_POS:
+			tween_anim.tween.tween_property(tween_anim.source.node, "position", _initial_position, duration)
 		UiTweenType.SLIDE_OUT_LEFT:
-			var start: Vector2 = tween_anim.source.intial_node_prop_cache.get("position")
 			var size: Vector2 = tween_anim.source.node.size
-			var value := start + Vector2(-size.x, 0)
-			tween_anim.tween.tween_property(tween_anim.source.node, "position", value, duration)
+			var offset := Vector2(-size.x, 0)
+			tween_anim.tween.tween_property(tween_anim.source.node, "position", offset, duration).as_relative().from(_initial_position)
 		UiTweenType.SLIDE_OUT_RIGHT:
-			var start: Vector2 = tween_anim.source.intial_node_prop_cache.get("position")
 			var size: Vector2 = tween_anim.source.node.size
-			var value := start + Vector2(size.x, 0)
-			tween_anim.tween.tween_property(tween_anim.source.node, "position", value, duration)
+			var offset := Vector2(size.x, 0)
+			tween_anim.tween.tween_property(tween_anim.source.node, "position", offset, duration).as_relative().from(_initial_position)
 		_: assert(false)
 
     tween_anim.tween.tween_callback(completed.emit)
