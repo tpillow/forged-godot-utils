@@ -1,6 +1,12 @@
 class_name TweenTrigger
 extends Node
 
+enum OnReadyTriggerMode {
+    NONE,
+	TRIGGER,
+    TRIGGER_FORCE_COMPLETE,
+}
+
 @export var tween_anim: TweenAnim:
 	get:
 		if tween_anim: return tween_anim
@@ -13,11 +19,16 @@ extends Node
 		return tween_anim.source.node
 	set(value): trigger_source = value
 	
-@export var trigger_immediately := false
+@export var on_ready_trigger_mode := OnReadyTriggerMode.NONE
 
 func _ready() -> void:
-	if trigger_immediately:
-		do_trigger.call_deferred()
+    match on_ready_trigger_mode:
+        OnReadyTriggerMode.NONE: pass
+		OnReadyTriggerMode.TRIGGER:
+			do_trigger.call_deferred()
+		OnReadyTriggerMode.TRIGGER_FORCE_COMPLETE:
+			assert(false, "unimplemented!")
+        _: assert(false)
 
 func do_trigger() -> void:
 	tween_anim.cancel_tween()
