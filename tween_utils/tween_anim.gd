@@ -22,7 +22,7 @@ func start_tween() -> void:
 		ts.apply_tween()
 
 func force_complete_tween() -> void:
-	if not tween or not tween.is_running(): return
+	if not tween: return
 
 	while tween.custom_step(force_complete_time_step):
 		pass
