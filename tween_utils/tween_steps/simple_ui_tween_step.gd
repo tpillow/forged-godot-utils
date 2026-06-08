@@ -7,7 +7,7 @@ enum UiTweenType {
 	SLIDE_OUT_RIGHT,
 }
 
-@export var ui_tween_type: UiTweenType = UiTweenType.SLIDE_IN_LEFT
+@export var ui_tween_type: UiTweenType = UiTweenType.TO_INITIAL_POS
 @export var easing: Tween.EaseType = Tween.EASE_OUT
 @export var trans: Tween.TransitionType = Tween.TRANS_EXPO
 @export var duration := 1.0
