@@ -19,3 +19,4 @@ func apply_tween() -> void:
 
 	tween_anim.tween.set_ease(easing).set_trans(trans)
 	tween_anim.tween.tween_property(tween_anim.source.node, prop_path, real_end_value, duration)
+    tween_anim.tween.tween_callback(completed.emit)
