@@ -27,9 +27,13 @@ func _ready() -> void:
 		OnReadyTriggerMode.TRIGGER:
 			do_trigger.call_deferred()
 		OnReadyTriggerMode.TRIGGER_FORCE_COMPLETE:
-			assert(false, "unimplemented!")
+			trigger_and_force_complete.call_deferred()
         _: assert(false)
 
 func do_trigger() -> void:
 	tween_anim.cancel_tween()
 	tween_anim.start_tween()
+
+func trigger_and_force_complete() -> void:
+    do_trigger()
+	tween_anim.force_complete_tween()
