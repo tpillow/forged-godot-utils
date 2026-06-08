@@ -31,3 +31,6 @@ func apply_tween() -> void:
 			var value := start + Vector2(size.x, 0)
 			tween_anim.tween.tween_property(tween_anim.source.node, "position", value, duration)
 		_: assert(false)
+
+    tween_anim.tween.tween_callback(completed.emit)
+
