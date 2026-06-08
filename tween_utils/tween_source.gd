@@ -11,6 +11,10 @@ func cancel_all_tweeners() -> void:
 	for anim in get_children():
 		anim.cancel_tween()
 
+func force_complete_all_tweeners() -> void:
+	for anim in get_children():
+		anim.force_complete_tween()
+
 func get_tween_anim(name: String) -> TweenAnim:
 	return find_child(name, false, false)
 
