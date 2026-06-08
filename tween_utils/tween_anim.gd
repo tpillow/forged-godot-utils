@@ -7,6 +7,8 @@ extends Node
 		return get_parent()
 	set(value): source = value
 
+@export var force_complete_time_step := 0.1
+
 var tween: Tween
 
 func cancel_tween() -> void:
@@ -18,3 +20,9 @@ func start_tween() -> void:
 	
 	for ts in NodeUtil.find_all_children_of_type(self, TweenStep, false):
 		ts.apply_tween()
+
+func force_complete_tween() -> void:
+	if not tween or not tween.is_running(): return
+
+	while tween.custom_step(force_complete_time_step):
+		pass
