@@ -5,26 +5,25 @@
 # transition between states.
 # The topmost StateNode under any given parent is implicitly the first active
 # state. All other StateNode siblings will be inactive initially.
-# The first active state WILL NOT receive on_entering_state / on_entered_state
-# calls. However, it will receive a onFirstStateReady call if the method exists.
+# The first active state WILL NOT receive on_entered_state calls. However, it
+# will receive a onFirstStateReady call if the method exists.
 class_name StateNode
 extends Node
+
+##### Callbacks to avoid needing separate scripts (optional) #####
+
+var process_callback: Callable # func(delta: float)
+var physics_process_callback: Callable # func(delta: float)
 
 ##### Signals #####
 
 # This state has now changed to the active state
-# This will always be called after on_entering_state
 signal entered_state()
 
 # This state is still active, but we are going to to_state
 signal exiting_state(to_state: StateNode)
 
 ##### Stubs #####
-
-# This state is about to be the active state, but not yet
-# This can define arguments to take on transition into this state
-# Does not need to be defined (default: no parameters, no behavior)
-# func on_entering_state(...) -> void
 
 # This state is the first active state and the ready function has been called
 func _on_first_active_state() -> void:
@@ -55,19 +54,13 @@ func get_state_by_type(type: Variant) -> StateNode:
 			return child
 	return null
 
-# Transition to to_state, passing along setup_args to the on_entering_state function
-# If to_state is the current state, this is a no-op
-func goto_state(to_state: StateNode, ...setup_args: Array[Variant]) -> void:
-	#if to_state == self:
-		#push_warning("calling goto_state from the same state: %s" % to_state)
+# Transition to to_state.
+func goto_state(to_state: StateNode) -> void:
+	if not is_active_state():
+		find_active_state(get_parent()).goto_state(to_state)
+		return
 
 	exiting_state.emit(to_state)
-	if to_state.has_method("on_entering_state"):
-		to_state.callv("on_entering_state", setup_args)
-	else:
-		assert(setup_args.size() == 0,
-			"provided setup_args to a state without a on_entering_state method")
-
 	_deactivate_state()
 
 	to_state._activate_state()
@@ -75,20 +68,23 @@ func goto_state(to_state: StateNode, ...setup_args: Array[Variant]) -> void:
 
 # Same as goto_state, but looks up to_state by name (searches siblings)
 @warning_ignore("shadowed_variable_base_class")
-func goto_state_by_name(name: String, ...setup_args: Array[Variant]) -> void:
+func goto_state_by_name(name: String) -> void:
 	var state_node := get_state_by_name(name)
 	assert(state_node, "gototStateByName did not find node %s" % name)
-	goto_state.callv([state_node] + setup_args)
+	goto_state(state_node)
 
 # Same as goto_state, but looks up to_state by type (searches siblings)
-func goto_state_by_type(type: Variant, ...setup_args: Array[Variant]) -> void:
+func goto_state_by_type(type: Variant) -> void:
 	var state_node := get_state_by_type(type)
 	assert(state_node, "goto_state_by_type did not find a node %s" % type)
-	goto_state.callv([state_node] + setup_args)
+	goto_state(state_node)
 
 # Returns true if this state is the currently-active state compared to siblings
 func is_active_state() -> bool:
 	return is_node_ready() and process_mode != Node.PROCESS_MODE_DISABLED
+
+func set_active() -> void:
+	return goto_state(self)
 
 ##### Static Helpers #####
 
@@ -117,6 +113,12 @@ func _ready() -> void:
 		# This is the first ready state compared to its siblings
 		_activate_state()
 		_on_first_active_state()
+
+func _process(delta: float) -> void:
+	if process_callback: process_callback.call(delta)
+
+func _physics_process(delta: float) -> void:
+	if physics_process_callback: physics_process_callback.call(delta)
 
 func _activate_state() -> void:
 	process_mode = Node.PROCESS_MODE_INHERIT

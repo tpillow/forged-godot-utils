@@ -1,12 +1,7 @@
-@abstract
 class_name SceneTransition
-extends Object
+extends Node
 
-enum Type {
-	PUSH,
-	POP,
-	REPLACE,
-	REPLACE_ALL,
-}
+signal completed()
 
-@abstract func begin(manager: SceneManager, type: Type, new_scene: Node) -> void
+@export var from_node: Node
+@export var to_node: Node

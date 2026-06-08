@@ -14,3 +14,9 @@ static func rand_deg_angle() -> float:
 
 static func rand_rad_angle() -> float:
 	return randf_range(0.0, TAU - 0.0001)
+
+static func randf_range_v(bounds: Vector2) -> float:
+	return randf_range(bounds.x, bounds.y)
+
+static func randv_range_v(boundsX: Vector2, boundsY: Vector2) -> Vector2:
+	return Vector2(randf_range_v(boundsX), randf_range_v(boundsY))
