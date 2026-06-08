@@ -1,6 +1,8 @@
 class_name TweenAnim
 extends Node
 
+const MAX_FORCE_COMPLETE_ITERS: int = 2000
+
 @export var source: TweenSource:
 	get:
 		if source: return source
@@ -24,5 +26,8 @@ func start_tween() -> void:
 func force_complete_tween() -> void:
 	if not tween: return
 
-	while tween.custom_step(force_complete_time_step):
-		pass
+	for i in range(MAX_FORCE_COMPLETE_ITERS):
+		if not tween.custom_step(force_complete_time_step):
+			return
+
+	push_error("force_complete_tween reached max. MAX_FORCE_COMPLETE_ITERS without completing")
