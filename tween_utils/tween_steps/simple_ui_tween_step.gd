@@ -12,6 +12,9 @@ enum UiTweenType {
 @export var trans: Tween.TransitionType = Tween.TRANS_EXPO
 @export var duration := 1.0
 
+var source_view_size: Vector2:
+    get: return tween_anim.source.node.get_viewport().get_visible_rect().size
+
 var _initial_position: Vector2
 var _initial_size: Vector2
 
@@ -26,13 +29,14 @@ func apply_tween() -> void:
 		UiTweenType.TO_INITIAL_POS:
 			tween_anim.tween.tween_property(tween_anim.source.node, "position", _initial_position, duration)
 		UiTweenType.SLIDE_OUT_LEFT:
+            var pos: Vector2 = tween_anim.source.node.position
 			var size: Vector2 = tween_anim.source.node.size
-			var offset := Vector2(-size.x, 0)
-			tween_anim.tween.tween_property(tween_anim.source.node, "position", offset, duration).as_relative().from(_initial_position)
+			var end_value := Vector2(-size.x, pos.y)
+			tween_anim.tween.tween_property(tween_anim.source.node, "position", end_value, duration)
 		UiTweenType.SLIDE_OUT_RIGHT:
-			var size: Vector2 = tween_anim.source.node.size
-			var offset := Vector2(size.x, 0)
-			tween_anim.tween.tween_property(tween_anim.source.node, "position", offset, duration).as_relative().from(_initial_position)
+            var pos: Vector2 = tween_anim.source.node.position
+			var end_value := Vector2(source_view_size.x, pos.y)
+			tween_anim.tween.tween_property(tween_anim.source.node, "position", end_value, duration)
 		_: assert(false)
 
     tween_anim.tween.tween_callback(completed.emit)
