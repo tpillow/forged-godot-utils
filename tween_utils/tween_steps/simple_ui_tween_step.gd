@@ -11,8 +11,7 @@ enum UiTweenType {
 @export var trans: Tween.TransitionType = Tween.TRANS_EXPO
 @export var duration := 1.0
 
-# TODO: make proper dir enum and use here
-@export var off_screen_dir := Vector2i.LEFT
+@export var off_screen_dir: EnumUtil.Dir8 = EnumUtil.Dir8.LEFT
 
 var source_view_size: Vector2:
     get: return tween_anim.source.node.get_viewport().get_visible_rect().size
@@ -31,13 +30,12 @@ func apply_tween() -> void:
 		UiTweenType.TO_INITIAL_POS:
 			tween_anim.tween.tween_property(tween_anim.source.node, "position", _initial_position, duration)
 		UiTweenType.TO_OFF_SCREEN_DIR:
-			assert(off_screen_dir != Vector2i.ZERO)
-
-            var pos: Vector2 = tween_anim.source.node.position
+			var pos: Vector2 = tween_anim.source.node.position
 			var size: Vector2 = tween_anim.source.node.size
 
-			var xp := -size.x if off_screen_dir.x < 0 else ( source_view_size.x if off_screen_dir.x > 0 else pos.x )
-			var yp := -size.y if off_screen_dir.y < 0 else ( source_view_size.y if off_screen_dir.y > 0 else pos.y )
+			var dv := EnumUtil.dir8_to_vec2(off_screen_dir)
+			var xp := -size.x if dv.x < 0 else ( source_view_size.x if dv.x > 0 else pos.x )
+			var yp := -size.y if dv.y < 0 else ( source_view_size.y if dv.y > 0 else pos.y )
 			var end_value := Vector2(xp, yp)
 
 			tween_anim.tween.tween_property(tween_anim.source.node, "position", end_value, duration)
