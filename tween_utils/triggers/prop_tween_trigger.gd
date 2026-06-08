@@ -21,7 +21,7 @@ func _ready() -> void:
 			assert(false, "unimplemented!")
             assert(on_ready_trigger_mode == TweenTrigger.OnReadyTriggerMode.NONE, "base TweenTrigger already has ready set")
 			if _last_value != value: break
-			force_complete.call_deferred()
+			trigger_and_force_complete.call_deferred()
         _: assert(false)
 	
 func _process(delta: float) -> void:
