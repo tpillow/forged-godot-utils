@@ -1,6 +1,8 @@
 class_name TweenStep
 extends Node
 
+signal completed()
+
 @export var tween_anim: TweenAnim:
 	get:
 		if tween_anim: return tween_anim
