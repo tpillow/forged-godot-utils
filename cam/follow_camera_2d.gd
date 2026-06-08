@@ -5,7 +5,7 @@ extends Camera2D
 var follow_node: Node2D:
 	get: return _follow_node
 
-@export var smooth_zoom_tween_settings: TweenSettings
+@export var smooth_zoom_tween_duration := 0.2
 
 @export_category("Shake")
 @export var max_shake_magnitude := 4.0
@@ -50,8 +50,7 @@ func set_follow_node(node: Node2D, snap: bool) -> void:
 		reset_smoothing()
 
 func smooth_zoom_to(to_zoom: Vector2) -> void:
-	if _zoom_tween:
-		_zoom_tween.stop()
+	if _zoom_tween: _zoom_tween.kill()
 	_zoom_tween = create_tween()
-	smooth_zoom_tween_settings.setup_for_tween(_zoom_tween)
-	_zoom_tween.tween_property(self, "zoom", to_zoom, smooth_zoom_tween_settings.duration)
+	_zoom_tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_zoom_tween.tween_property(self, "zoom", to_zoom, smooth_zoom_tween_duration)
