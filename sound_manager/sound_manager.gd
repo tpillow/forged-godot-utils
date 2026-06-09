@@ -51,6 +51,7 @@ func is_master_muted() -> bool:
 	return AudioServer.is_bus_mute(bus_index)
 
 func set_master_mute(muted: bool) -> void:
+	if muted == is_master_muted(): return
 	var bus_index = AudioServer.get_bus_index("Master")
 	AudioServer.set_bus_mute(bus_index, muted)
 	master_muted_changed.emit()
