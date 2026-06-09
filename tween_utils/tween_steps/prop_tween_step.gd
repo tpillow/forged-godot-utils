@@ -12,6 +12,6 @@ extends TweenStep
 func apply_tween() -> void:
 	tween_anim.tween.set_ease(easing).set_trans(trans)
 	var prop_tween := tween_anim.tween.tween_property(tween_anim.source.node, prop_path, end_value, duration)
-    if end_value_is_relative:
-        prop_tween.as_relative()
-    tween_anim.tween.tween_callback(completed.emit)
+	if end_value_is_relative:
+		prop_tween.as_relative()
+	tween_anim.tween.tween_callback(completed.emit)

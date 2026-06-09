@@ -3,7 +3,7 @@ extends TweenStep
 
 enum UiTweenType {
 	TO_INITIAL_POS,
-    TO_OFF_SCREEN_DIR,
+	TO_OFF_SCREEN_DIR,
 }
 
 @export var ui_tween_type: UiTweenType = UiTweenType.TO_INITIAL_POS
@@ -14,14 +14,17 @@ enum UiTweenType {
 @export var off_screen_dir: EnumUtil.Dir8 = EnumUtil.Dir8.LEFT
 
 var source_view_size: Vector2:
-    get: return tween_anim.source.node.get_viewport().get_visible_rect().size
+	get: return tween_anim.source.node.get_viewport().get_visible_rect().size
 
 var _initial_position: Vector2
 var _initial_size: Vector2
 
 func _ready() -> void:
-    _initial_position = tween_anim.source.node.position
-    _initial_size = tween_anim.source.node.size
+	_set_initials.call_deferred()
+	
+func _set_initials() -> void:
+	_initial_position = tween_anim.source.node.position
+	_initial_size = tween_anim.source.node.size
 
 func apply_tween() -> void:
 	tween_anim.tween.set_ease(easing).set_trans(trans)
@@ -41,5 +44,4 @@ func apply_tween() -> void:
 			tween_anim.tween.tween_property(tween_anim.source.node, "position", end_value, duration)
 		_: assert(false)
 
-    tween_anim.tween.tween_callback(completed.emit)
-
+	tween_anim.tween.tween_callback(completed.emit)
