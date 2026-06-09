@@ -20,7 +20,10 @@ var _initial_position: Vector2
 var _initial_size: Vector2
 
 func _ready() -> void:
-	_set_initials.call_deferred()
+	if tween_anim.source.node.is_node_ready():
+		_set_initials()
+	else:
+		tween_anim.source.node.ready.connect(_set_initials, CONNECT_ONE_SHOT)
 	
 func _set_initials() -> void:
 	_initial_position = tween_anim.source.node.position
