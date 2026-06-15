@@ -8,11 +8,12 @@ signal focus_node_start_drag(node: Node2D)
 signal focus_node_stop_drag(node: Node2D)
 
 @export var follow_mouse := true
+@export var match_draggable_group_to_drag := true
 @export var draggable_group_name: String
 @export var set_dragging_global_pos := true
 
 var supports_dragging: bool:
-	get: return draggable_group_name != ""
+	get: return not match_draggable_group_to_drag or draggable_group_name != ""
 
 var _focus_node: Node2D = null
 var focus_node: Node2D:
@@ -55,7 +56,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if not focus_node: return
 			if not event.is_pressed(): return
 			
-			if supports_dragging and focus_node.is_in_group(draggable_group_name):
+			if supports_dragging and (not match_draggable_group_to_drag or focus_node.is_in_group(draggable_group_name)):
 				_is_dragging = true
 				focus_node_start_drag.emit(focus_node)
 			else:
