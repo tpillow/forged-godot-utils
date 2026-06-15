@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://vlla6p30auho"]
+
+[ext_resource type="Script" uid="uid://di7jdx7plqhn3" path="res://forged_godot_utils/misc/empty_scene.gd" id="1_gf5h5"]
+
+[node name="EmptyScene" type="Node2D" unique_id=1922484538]
+script = ExtResource("1_gf5h5")
